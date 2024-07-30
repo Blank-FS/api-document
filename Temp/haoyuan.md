@@ -1,0 +1,93 @@
+## 预约挂号（医院接入）
+
+### 上传排班号源
+
+**功能描述:** 院内排班、号源数据发生变更时，将排班数据同步到 160 平台
+
+**场景价值:** 增加预约挂号量
+
+**适用对象:** HIS 开发商、号源池平台
+
+**接口地址:** https://api.open.91160.com/guahao/v1/uploadSch
+
+**请求方式:** POST
+
+**请求参数:**
+
+| 参数         | 参数类型 | 参数名                 | 是否必须 | 描述                     |
+| ------------ | -------- | ---------------------- | -------- | ------------------------ |
+| appToken     | string   | 开放平台应用授权 Token | true     | -                        |
+| unitId       | int      | 医院 id                | true     | -                        |
+| schDate      | String   | 出诊日期               | true     | 格式：yyyy-MM-dd         |
+| hisDepId     | String   | his 内部科室编码       | true     | -                        |
+| hisDocId     | String   | his 内部医生工号       | true     | -                        |
+| timeType     | int      | 班别                   | true     | 1：上午 2：下午 3：晚上  |
+| hisSchId     | String   | his 排班 id            | false    | 若非空，值唯一           |
+| schMax       | int      | 放号数                 | true     | -                        |
+| schNum       | int      | 已预约数               | true     | -                        |
+| levelName    | String   | 挂号级别               | true     | 如主任医师、副主任医师等 |
+| regFee       | int      | 挂号费                 | true     | 单位（分）               |
+| treatFee     | int      | 自费诊疗费             | true     | 单位（分）               |
+| SStreatFee   | int      | 医保诊疗费             | true     | 单位（分）               |
+| treatFeeJS   | int      | 加收后自费诊疗费       | false    | 单位（分）               |
+| SStreatFeeJS | int      | 加收后自费诊疗费       | false    | 单位（分）               |
+| srcList      | array    | 号源明细               | false    | -                        |
+| └─hisSrcId   | String   | 号源 id                | true     | -                        |
+| └─beginTime  | String   | 开始时间               | true     | 格式 hh:mm               |
+| └─endTime    | String   | 结束时间               | true     | 格式 hh:mm               |
+| └─srcMax     | int      | 最大放号数             | true     | -                        |
+| └─srcNum     | int      | 已预约数               | true     | -                        |
+
+**请求示例:**
+
+```
+curl -X POST -k -H '报文类型: application/json; charset=utf-8' -i https://api.open.91160.com/guahao/v1/uploadSch --data '{
+    "appToken":"XXXXXX",
+    "unitId":"21",
+    "schDate":"2023-04-25",
+    "hisDepId":"0123",
+    "hisDocId":"356",
+    "timeType":"2",
+    "hisSchId":"2685421",
+    "schMax":10,
+    "schNum":4,
+    "levelName":"主任医师",
+    "regFee":0,
+    "treatFee":5000,
+    "SStreatFee":3600,
+    "treatFeeJS":6500,
+    "SStreatFeeJS":4140,
+    "srcList":[
+        {
+            "hisSrcId":"23",
+            "beginTime":"15:00",
+            "endTime":"15:30",
+            "srcMax":5,
+            "srcNum":2
+        },
+        {
+            "hisSrcId":"24",
+            "beginTime":"16:00",
+            "endTime":"16:30",
+            "srcMax":5,
+            "srcNum":2
+        }
+    ]
+}'
+```
+
+**返回参数:**
+
+| 字段 | 字段类型 | 字段说明 | 备注                |
+| ---- | -------- | -------- | ------------------- |
+| code | string   | 错误码   | 1 表示成功 其他失败 |
+| msg  | string   | 错误信息 | -                   |
+
+**返回示例:**
+
+```
+{
+    "code": 1,
+    "msg": "成功！"
+}
+```
