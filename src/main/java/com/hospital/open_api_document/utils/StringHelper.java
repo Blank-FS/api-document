@@ -21,4 +21,13 @@ public class StringHelper {
         }
         return str.replace("\\\"", "\"");
     }
+
+    public static String removeExtraDoubleQuotes(String str) {
+        int length = str.length();
+        if (str.charAt(length - 1) == '\"')
+            str = str.substring(0, length - 1);
+        if (str.charAt(0) == '\"')
+            str = str.substring(1, length - 1);
+        return str;
+    }
 }

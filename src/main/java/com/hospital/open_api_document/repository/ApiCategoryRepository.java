@@ -14,4 +14,6 @@ public interface ApiCategoryRepository extends JpaRepository<ApiCategory, UUID> 
     Optional<ApiCategory> findByName(String name);
 
     List<ApiCategory> findByType(ApiType topic);
+
+    List<ApiCategory> findAllByOrderByNameCNAsc();
 }

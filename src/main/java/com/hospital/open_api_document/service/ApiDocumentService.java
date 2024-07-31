@@ -57,7 +57,11 @@ public class ApiDocumentService {
             return null;
 
         // 从数据库中寻找对应 API 领域的 API 种类， 加入要返回的参数中
-        List<ApiCategory> categoryList = apiCategoryRepository.findByType(apiType);
+        List<ApiCategory> categoryList = apiCategoryRepository.findAllByOrderByNameCNAsc();
+        for (int i = categoryList.size() - 1; i >= 0; i--)
+            if (!categoryList.get(i).getType().getName().equals(type))
+                categoryList.remove(i);
+
         LinkedHashMap<String, CategorySections> sections = new LinkedHashMap<>();
         Set<UUID> categoryID = new HashSet<>();
         for (ApiCategory category : categoryList) {

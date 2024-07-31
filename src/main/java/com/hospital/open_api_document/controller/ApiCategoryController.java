@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.hospital.open_api_document.model.ApiCategory;
 import com.hospital.open_api_document.service.ApiCategoryService;
+import com.hospital.open_api_document.utils.StringHelper;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,5 +54,18 @@ public class ApiCategoryController {
         }
         apiCategoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/name-cn/{id}")
+    public ResponseEntity<ApiCategory> updateCategoryNameCN(@PathVariable UUID id, @RequestBody String nameCN) {
+        Optional<ApiCategory> category = apiCategoryService.getCategoryById(id);
+        if (!category.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        ApiCategory updateCategory = category.get();
+        nameCN = StringHelper.removeExtraDoubleQuotes(nameCN);
+        updateCategory.setNameCN(nameCN);
+        updateCategory = apiCategoryService.saveCategory(updateCategory);
+        return ResponseEntity.ok(updateCategory);
     }
 }
