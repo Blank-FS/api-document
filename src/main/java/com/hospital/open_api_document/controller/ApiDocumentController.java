@@ -13,6 +13,7 @@ import com.hospital.open_api_document.service.ApiTopicService;
 import com.hospital.open_api_document.types.CategorySections;
 import com.hospital.open_api_document.utils.StringHelper;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,8 +53,9 @@ public class ApiDocumentController {
 
     // 根据 API 领域返回对应的 API 文档信息，包括其所属的 API 种类和 API 话题
     @GetMapping("/{type}")
-    public ResponseEntity<Map<String, CategorySections>> getSectionsByType(@PathVariable("type") String type) {
-        Map<String, CategorySections> value = apiDocumentService.getSectionsByType(type);
+    public ResponseEntity<LinkedHashMap<String, CategorySections>> getSortedSectionsByType(
+            @PathVariable("type") String type) {
+        LinkedHashMap<String, CategorySections> value = apiDocumentService.getSortedSectionsByType(type);
         // 如果信息没从数据库中找到， 返回 404
         if (value == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

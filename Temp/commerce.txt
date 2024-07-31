@@ -1,0 +1,155 @@
+## 商品API
+### 1.创建和更新商品
+**接口说明**
+```
+推送商品过来时，需调用此接口，在160平台这里创建商品
+```
+**请求方式及地址**
+
+```
+【POST】https://wsapi.91160.com/index.php?c=openhealth&a=saveGoods
+```
+
+**请求参数【放在form-data里】**
+
+| 字段             | 名称              | 类型       | 必填 | 备注                                                                                                                                                                       |
+| ---------------- | ----------------- |----------| ---- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| access_token     | Token凭证         | string   | 是   |                                                                                                                                                                                      |
+| id               | 商品id            | int      |      | 有值为编辑 (160套餐ID)                                                                                                                                                                      |
+| third_goods_id   | 第三方套餐ID      | int      |      | 有套餐ID关联映射必填                                                                                                                                                                          |
+| name             | 商品名字          | string   | 是   |                                                                                                                                                                                      |
+| packageType      | 套餐类型          | int      | 是   | 套餐类型 1 商品 2 服务 3 线下活动 4 体检套餐                                                                                                                                                         |
+| imgs             | 商品图片json 数据 | string   | 是   | [\"integral/2018/08/12815341290116003.jpg\"]，最多可上传6张，平台建议比例为4：3，文件大小在10MB以内，支持jpg、png、gif格式                                                                                                                                          |
+| logisticsSet     | 物流设置          | int      | 是   | 0仅需到店使用 1仅需物流发货 2需到店使用和物流发货                                                                                                                                                          |
+| tag              | 标签              | int      | 是   | 0无 1热卖2优惠                                                                                                                                                                            |
+| keyword          | 关键词            | string   |      | 多个时以逗号分隔                                                                                                                                                                             |
+| orgPrice         | 原价              | string   |      | 单位：元                                                                                                                                                                                 |
+| price            | 售价              | string   |      | 单位：元                                                                                                                                                                                 |
+| stock            | 库存              | int      |      |                                                                                                                                                                                      |
+| publicCategoryId | 公共分类id        | int      | 是   | 160平台提供id，需做好映射关系                                                                                                                                                                    |
+| deposit          | 定金              | string   | 是   | packageType=2（服务）传填写的，其他传销售价                                                                                                                                                         |
+| detail           | 富文本详情        | string   | 是   | 套餐图文介绍信息，[{\"data\":[{\"item_desc\":\"果糖胺检测\",\"item_name\":\"果糖胺\",\"sort\":4},{\"item_desc\":\"鼻咽癌二项，AFP(甲胎蛋白)\",\"item_name\":\"肿瘤筛查\",\"sort\":5}],\"label\":\"专科检查\"}]                                    |
+| saleTime         | 计划上线时间      | string   | 是   | 2020-09-25 15:10:20                                                                                                                                                                  |
+| removeTime       | 计划下线时间      | string   | 是   | 2020-10-25 15:10:20                                                                                                                                                                  |
+| isEnduring       | 预约有效日期      | int      | 是   | 2、1个月 3、半年   4、一年 5、指定日期                                                                                                                                                             |
+| startTime        | 预约有效开始时间  | string   |      | 当isEnduring=5时必传                                                                                                                                                                     |
+| endTime          | 预约有效结束时间  | string   |      | 当isEnduring=5时必传                                                                                                                                                                     |
+| illness          | 关联疾病          | string   |      | [{\"ill_id\":\"7308\",\"ill_name\":\"糖尿病皮肤感染\"},{\"ill_id\":\"9713\",\"ill_name\":\"心脑血管疾病\"}] 160平台提供id，需做好映射关系                                                                                     |
+| attributeAge     | 适用人群          | string   |      | [{\"age_id\":\"1\",\"age_name\":\"中青年\"}]，160平台提供id，需做好映射关系                                                                                                                                  |
+| yuyueMouldId     | 就诊预约模板id    | int      |      | 当packageType=2时必传                                                                                                                                                                    |
+| subUnitId        | 机构id            | int      | 是   | 套餐关联的第三方机构ID                                                                                                                                                                         |
+| sex              | 适用性别          | int      | 是   | 0男 1女 2全部                                                                                                                                                                            |
+| ageMin           | 适用人群最小年龄  | int      | 是   |                                                                                                                                                                                      |
+| ageMax           | 适用人群最大年龄  | int      | 是   |                                                                                                                                                                                      |
+| customData       | 自定义预约须知    | string   |      | [{\"key\":\"使用时间\",\"value\":\"9:00-20:00\"}]                                                                                                                                                |
+| isDefaultRule    | 默认预约规则      | int      |      | 0否 1是                                                                                                                                                                                |
+| rule             | 预约规则          | string   |      |                                                                                                                                                                                      |
+| goodsSpecial     | 商品规格          | string   | 是   | [{\"stock\":\"299\",\"price\":\"999.00\",\"orgPrice\":\"999.00\",\"isDefault\":  \"1\",\"deposit\": \"999.00\",\"img\": \"1.jpg\"}]    (stock库存、price优惠价 、orgprice 原价、isdefault是否为默认规格 、deposit定金 、img 图片地址) |
+
+**响应参数**
+
+| 字段   | 名称     | 类型   | 备注         |
+| ------ | -------- | ------ | ------------ |
+| status | 返回码   | int    | 1成功、0失败 |
+| msg    | 返回信息 | string |              |
+| data   | 返回对象 | array  |              |
+| id     | 商品id   | int    |              |
+
+**响应示例**
+
+```json
+{
+    \"status\":1,
+    \"msg\":\"\",
+    \"data\":{
+        \"id\":\"1000128\"
+    }
+}
+```
+
+### 2.图片上传
+**接口说明**
+```
+推送商品过来时，商品的图片，需要用此接口的返回图片链接
+```
+**请求方式及地址**
+```
+【POST】https://wsapi.91160.com/index.php?c=openhealth&a=imageUpload
+```
+
+**请求参数【放在form-data里】**
+
+| 字段         | 名称      | 类型   | 必填 | 备注                             |
+| ------------ | --------- | ------ | ---- | -------------------------------- |
+| access_token | token凭证 | string | 是   |                                  |
+| url          | 图片地址  | string | 是   | 带链接的图片地址，多个以逗号隔开 |
+
+**响应参数**
+
+| 字段          | 名称           | 类型   | 备注                  |
+| ------------- | -------------- | ------ | --------------------- |
+| status        | 返回码         | int    | 1成功、0失败          |
+| msg           | 返回信息       | string |                       |
+| data          | 返回对象       | array  |                       |
+| upload_status | 上传状态       | int    | 上传状态 1成功、0失败 |
+| upload_url    | 160图片地址    | string |                       |
+| url           | 原上传图片地址 | string |                       |
+| msg           | 错误信息       | string |                       |
+
+**响应示例**
+
+```json
+{
+    \"status\": 1,
+    \"data\": [
+        {
+            \"upload_status\": 1,
+            \"url\": \"/integral/2021/11/200093820163645113619099.png\",
+            \"upload_url\": \"\",
+            \"msg\": \"\"
+        }
+    ],
+    \"msg\": \"\"
+}
+```
+
+### 3.套餐上下架
+**接口说明**
+```
+通过此接口进行套餐上下架操作
+当调用创建和更新商品接口后，套餐会进入待审核状态
+审核通过后，套餐会进入待上架状态，而通过接口对接创建的商品会自动上架，不需要调用此接口进行上架操作
+```
+**请求方式及地址**
+```
+【POST】https://wsapi.91160.com/index.php?c=openhealth&a=upperLowerShelves
+```
+
+**请求参数【放在form-data里】**
+
+| 字段             | 名称      | 类型   | 必填 | 备注                 |
+|----------------|---------| ------ | ---- |--------------------|
+| access_token   | token凭证 | string | 是   |                    |
+| goods_id       | 套餐id    | int    | 是   | third_goods_id 二选一 |
+| third_goods_id | 第三方套餐id | int    | 是   | goods_id 二选一       |
+| state          | 状态      | int    | 是   | 1上架、2下架            |
+| remarks        | 备注      | string |      | 下架必填               |
+
+**响应参数**
+
+| 字段   | 名称     | 类型   | 备注         |
+| ------ | -------- | ------ | ------------ |
+| status | 返回码   | int    | 1成功、0失败 |
+| msg    | 返回信息 | string |              |
+| data   | 返回对象 | array  |              |
+
+**响应示例**
+
+```json
+{
+    \"status\":1,
+    \"msg\":\"\",
+    \"data\":[]
+}
+```
+

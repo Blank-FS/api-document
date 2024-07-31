@@ -25,10 +25,11 @@ public class ReadMarkdownFileToString {
     }
 
     public static void main(String[] args) {
-        String filePath = "orderChange.md";
+        String name = "thirdUnit";
+        String filePath = name + ".md";
         try {
             String result = Files.readString(Path.of(filePath));
-            createTextFile("orderChange.txt", escapeString(result));
+            createTextFile(name + ".txt", escapeString(result));
         } catch (IOException e) {
             System.out.println(e);
         }

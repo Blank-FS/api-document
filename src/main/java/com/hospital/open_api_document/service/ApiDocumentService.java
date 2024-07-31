@@ -14,9 +14,13 @@ import com.hospital.open_api_document.types.CategorySections;
 import com.hospital.open_api_document.utils.StringHelper;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 // 数据库 API 文档信息数据提取服务
 @Service
@@ -45,7 +49,7 @@ public class ApiDocumentService {
     }
 
     // 根据 API 的领域 (e.g. 医院服务合作, 渠道合作) 进行相对应数据的查找
-    public Map<String, CategorySections> getSectionsByType(String type) {
+    public LinkedHashMap<String, CategorySections> getSortedSectionsByType(String type) {
         // 从数据库中寻找领域， 返回相对应的 API 领域对象。不存方法直接返回 null 对象。
         Optional<ApiType> item = apiTypeRepository.findByName(type);
         ApiType apiType = item.isPresent() ? item.get() : null;
@@ -54,14 +58,18 @@ public class ApiDocumentService {
 
         // 从数据库中寻找对应 API 领域的 API 种类， 加入要返回的参数中
         List<ApiCategory> categoryList = apiCategoryRepository.findByType(apiType);
-        Map<String, CategorySections> sections = new HashMap<>();
-        for (ApiCategory category : categoryList)
+        LinkedHashMap<String, CategorySections> sections = new LinkedHashMap<>();
+        Set<UUID> categoryID = new HashSet<>();
+        for (ApiCategory category : categoryList) {
             sections.put(category.getName(), new CategorySections(category.getNameCN()));
+            categoryID.add(category.getId());
+        }
 
         // 从数据库中提取所有 API 话题， 如果对应任何 API 种类， 加入要返回的参数当中
-        List<ApiTopic> topicList = apiTopicRepository.findAll();
+        List<ApiTopic> topicList = apiTopicRepository.findAllByOrderByNameCNAsc();
         for (ApiTopic topic : topicList) {
-            if (!sections.containsKey(topic.getCategory().getName()))
+            System.out.println(topic.getNameCn());
+            if (!categoryID.contains(topic.getCategory().getId()))
                 continue;
             ApiDoc temp = new ApiDoc(topic.getNameCn(), StringHelper.doNotShowEscapeDoubleQuote(topic.getContentMd()));
             sections.get(topic.getCategory().getName()).getTopics().put(topic.getName(), temp);
