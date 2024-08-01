@@ -11,6 +11,7 @@ import com.hospital.open_api_document.model.ApiType;
 import com.hospital.open_api_document.service.ApiCategoryService;
 import com.hospital.open_api_document.service.ApiTopicService;
 import com.hospital.open_api_document.service.ApiTypeService;
+import com.hospital.open_api_document.utils.StringHelper;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,25 +73,6 @@ public class ApiTopicController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTopic);
     }
 
-    @PutMapping("/md/{id}")
-    public ResponseEntity<ApiTopic> updateMd(@PathVariable UUID id, @RequestBody String topic) {
-        Optional<ApiTopic> topicOptional = apiTopicService.getTopicById(id);
-        if (!topicOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        // Remove extra double quotation marks
-        int length = topic.length();
-        if (topic.charAt(length - 1) == '\"')
-            topic = topic.substring(0, length - 1);
-        if (topic.charAt(0) == '\"')
-            topic = topic.substring(1, length - 1);
-        // Update Markdown content of the specific topic
-        ApiTopic updatedTopic = topicOptional.get();
-        updatedTopic.setContentMd(topic);
-        apiTopicService.saveTopic(updatedTopic);
-        return ResponseEntity.ok(updatedTopic);
-    }
-
     @DeleteMapping("/id/{id}")
     public ResponseEntity<String> deleteTopicById(@PathVariable UUID id) {
         if (!apiTopicService.getTopicById(id).isPresent()) {
@@ -98,5 +80,32 @@ public class ApiTopicController {
         }
         apiTopicService.deleteTopic(id);
         return ResponseEntity.ok("Deleted Successfully");
+    }
+
+    // 根据 API 主题的 ID 获取其 markdown 内容
+    @GetMapping("/md/{id}")
+    public ResponseEntity<String> getMd(@PathVariable UUID id) {
+        Optional<ApiTopic> topicOptional = apiTopicService.getTopicById(id);
+        if (!topicOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        ApiTopic targetTopic = topicOptional.get();
+        return ResponseEntity.ok(targetTopic.getContentMd());
+    }
+
+    // 根据 API 主题的 ID 更新其 markdown 内容
+    @PutMapping("/md/{id}")
+    public ResponseEntity<ApiTopic> updateMd(@PathVariable UUID id, @RequestBody String contentMd) {
+        Optional<ApiTopic> topicOptional = apiTopicService.getTopicById(id);
+        if (!topicOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        // Remove extra leading and trailing double quotation marks if they exist
+        contentMd = StringHelper.removeExtraDoubleQuotes(contentMd);
+        // Update Markdown content of the specific topic
+        ApiTopic updatedTopic = topicOptional.get();
+        updatedTopic.setContentMd(contentMd);
+        apiTopicService.saveTopic(updatedTopic);
+        return ResponseEntity.ok(updatedTopic);
     }
 }

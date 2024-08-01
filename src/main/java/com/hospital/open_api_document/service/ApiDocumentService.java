@@ -72,7 +72,6 @@ public class ApiDocumentService {
         // 从数据库中提取所有 API 话题， 如果对应任何 API 种类， 加入要返回的参数当中
         List<ApiTopic> topicList = apiTopicRepository.findAllByOrderByNameCNAsc();
         for (ApiTopic topic : topicList) {
-            System.out.println(topic.getNameCn());
             if (!categoryID.contains(topic.getCategory().getId()))
                 continue;
             ApiDoc temp = new ApiDoc(topic.getNameCn(), StringHelper.doNotShowEscapeDoubleQuote(topic.getContentMd()));
