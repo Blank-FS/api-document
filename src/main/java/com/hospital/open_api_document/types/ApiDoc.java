@@ -1,10 +1,14 @@
 package com.hospital.open_api_document.types;
 
+import java.util.UUID;
+
 public class ApiDoc {
     private String nameCN;
+    private UUID id;
     private String contentMD;
 
-    public ApiDoc(String n_cn, String c_md) {
+    public ApiDoc(UUID id, String n_cn, String c_md) {
+        this.id = id;
         this.nameCN = n_cn;
         this.contentMD = c_md;
     }
@@ -15,5 +19,9 @@ public class ApiDoc {
 
     public String getContentMD() {
         return contentMD;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

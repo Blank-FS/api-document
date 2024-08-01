@@ -42,7 +42,8 @@ public class ApiDocumentService {
         for (ApiCategory category : categoryList)
             sections.put(category.getName(), new CategorySections(category.getNameCN()));
         for (ApiTopic topic : topicList) {
-            ApiDoc temp = new ApiDoc(topic.getNameCn(), StringHelper.doNotShowEscapeDoubleQuote(topic.getContentMd()));
+            ApiDoc temp = new ApiDoc(topic.getId(), topic.getNameCn(),
+                    StringHelper.doNotShowEscapeDoubleQuote(topic.getContentMd()));
             sections.get(topic.getCategory().getName()).getTopics().put(topic.getName(), temp);
         }
         return sections;
@@ -74,7 +75,8 @@ public class ApiDocumentService {
         for (ApiTopic topic : topicList) {
             if (!categoryID.contains(topic.getCategory().getId()))
                 continue;
-            ApiDoc temp = new ApiDoc(topic.getNameCn(), StringHelper.doNotShowEscapeDoubleQuote(topic.getContentMd()));
+            ApiDoc temp = new ApiDoc(topic.getId(), topic.getNameCn(),
+                    StringHelper.doNotShowEscapeDoubleQuote(topic.getContentMd()));
             sections.get(topic.getCategory().getName()).getTopics().put(topic.getName(), temp);
         }
 
