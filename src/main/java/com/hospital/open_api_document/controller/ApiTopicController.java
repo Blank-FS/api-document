@@ -14,10 +14,12 @@ import com.hospital.open_api_document.service.ApiTypeService;
 import com.hospital.open_api_document.utils.StringHelper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8095")
 @RequestMapping("/api/topics")
 public class ApiTopicController {
 
@@ -95,13 +97,12 @@ public class ApiTopicController {
 
     // 根据 API 主题的 ID 更新其 markdown 内容
     @PutMapping("/md/{id}")
-    public ResponseEntity<ApiTopic> updateMd(@PathVariable UUID id, @RequestBody String contentMd) {
+    public ResponseEntity<ApiTopic> updateMd(@PathVariable UUID id, @RequestBody String payLoad) {
+        String contentMd = payLoad;
         Optional<ApiTopic> topicOptional = apiTopicService.getTopicById(id);
-        if (!topicOptional.isPresent()) {
+        if (!topicOptional.isPresent() || contentMd == null || contentMd == "")
             return ResponseEntity.notFound().build();
-        }
-        // Remove extra leading and trailing double quotation marks if they exist
-        contentMd = StringHelper.removeExtraDoubleQuotes(contentMd);
+
         // Update Markdown content of the specific topic
         ApiTopic updatedTopic = topicOptional.get();
         updatedTopic.setContentMd(contentMd);
