@@ -11,15 +11,12 @@ import com.hospital.open_api_document.model.ApiType;
 import com.hospital.open_api_document.service.ApiCategoryService;
 import com.hospital.open_api_document.service.ApiTopicService;
 import com.hospital.open_api_document.service.ApiTypeService;
-import com.hospital.open_api_document.utils.StringHelper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8095")
 @RequestMapping("/api/topics")
 public class ApiTopicController {
 
@@ -96,8 +93,9 @@ public class ApiTopicController {
     }
 
     // 根据 API 主题的 ID 更新其 markdown 内容
+    @CrossOrigin(origins = "http://localhost:8095")
     @PutMapping("/md/{id}")
-    public ResponseEntity<ApiTopic> updateMd(@PathVariable UUID id, @RequestBody String payLoad) {
+    public ResponseEntity<String> updateMd(@PathVariable UUID id, @RequestBody String payLoad) {
         String contentMd = payLoad;
         Optional<ApiTopic> topicOptional = apiTopicService.getTopicById(id);
         if (!topicOptional.isPresent() || contentMd == null || contentMd == "")
@@ -107,6 +105,22 @@ public class ApiTopicController {
         ApiTopic updatedTopic = topicOptional.get();
         updatedTopic.setContentMd(contentMd);
         apiTopicService.saveTopic(updatedTopic);
-        return ResponseEntity.ok(updatedTopic);
+        return ResponseEntity.ok(updatedTopic.getContentMd());
+    }
+
+    // 根据 API 主题的 ID 更新其 主题命名
+    @CrossOrigin(origins = "http://localhost:8095")
+    @PutMapping("/namecn/{id}")
+    public ResponseEntity<String> updateNameCn(@PathVariable UUID id, @RequestBody String payLoad) {
+        String nameCN = payLoad;
+        Optional<ApiTopic> topicOptional = apiTopicService.getTopicById(id);
+        if (!topicOptional.isPresent() || nameCN == null || nameCN == "")
+            return ResponseEntity.notFound().build();
+
+        // Update nameCN of the specific topic
+        ApiTopic updatedTopic = topicOptional.get();
+        updatedTopic.setNameCn(nameCN);
+        apiTopicService.saveTopic(updatedTopic);
+        return ResponseEntity.ok(updatedTopic.getNameCn());
     }
 }
