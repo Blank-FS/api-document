@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8095")
+@CrossOrigin(origins = "${FRONT_END}")
 @RequestMapping("/api/documents")
 public class ApiDocumentController {
 

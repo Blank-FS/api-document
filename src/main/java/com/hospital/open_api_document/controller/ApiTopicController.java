@@ -72,7 +72,7 @@ public class ApiTopicController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTopic);
     }
 
-    @DeleteMapping("/id/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTopicById(@PathVariable UUID id) {
         if (!apiTopicService.getTopicById(id).isPresent()) {
             return ResponseEntity.notFound().build();
@@ -93,7 +93,7 @@ public class ApiTopicController {
     }
 
     // 根据 API 主题的 ID 更新其 markdown 内容
-    @CrossOrigin(origins = "http://localhost:8095")
+    @CrossOrigin(origins = "${FRONT_END}")
     @PutMapping("/md/{id}")
     public ResponseEntity<String> updateMd(@PathVariable UUID id, @RequestBody String payLoad) {
         String contentMd = payLoad;
@@ -109,7 +109,7 @@ public class ApiTopicController {
     }
 
     // 根据 API 主题的 ID 更新其 主题命名
-    @CrossOrigin(origins = "http://localhost:8095")
+    @CrossOrigin(origins = "${FRONT_END}")
     @PutMapping("/namecn/{id}")
     public ResponseEntity<String> updateNameCn(@PathVariable UUID id, @RequestBody String payLoad) {
         String nameCN = payLoad;
